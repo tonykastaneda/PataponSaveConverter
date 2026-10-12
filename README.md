@@ -6,7 +6,7 @@ between the original PSP games and **Patapon 1+2 Replay** on PC.
 **GitHub Pages:** https://tonykastaneda.github.io/PataponSaveConverter/
 
 The web app runs entirely in the browser. Save files are processed locally
-and never sent to a server. Destination templates are bundled inside the app,
+and never sent to a server. Neutral destination structures are bundled inside the app,
 so no second upload or separate target template is needed.
 
 | Game | Direction | Status |
@@ -17,7 +17,7 @@ so no second upload or separate target template is needed.
 | Patapon 2 | Replay → PSP | Experimental; binary mapping roundtrip verified |
 
 The converter maps units, inventory, base values, talk buffers, and strings.
-Some later progress and settings fields remain in the bundled target template. The
+Some later progress and settings fields are currently left at neutral defaults. The
 verified paths loaded the expected source saves in-game; that does not
 establish full coverage for every save or region. This version supports USA
 PSP saves (`UCUS98711` for P1 and `UCUS98732` for P2).
@@ -26,7 +26,7 @@ PSP saves (`UCUS98711` for P1 and `UCUS98732` for P2).
 
 1. Drop your save file into the drop zone (or click to browse).
    - Replay uses a `.sav`.
-   - PSP uses a ZIP of its `UCUS…_DATA##` savedata folder, a dropped folder, or a standalone `SECURE.BIN`.
+   - PSP uses a ZIP of its `UCUS…_DATA##` savedata folder or a standalone `SECURE.BIN`.
 2. The app automatically detects the game (Patapon 1 or 2) and source format, selecting the opposite format as the target.
 3. Click **Convert** to download your converted `.sav` or PSP savedata ZIP.
 4. Back up your existing destination save before importing and check progress in-game.

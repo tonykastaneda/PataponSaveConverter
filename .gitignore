@@ -4,6 +4,7 @@
 !*.schema.json
 !web/package.json
 !web/package-lock.json
+!web/public/templates/*.json
 !web/src/templates/*.json
 key.bin
 psp-save-reference/
