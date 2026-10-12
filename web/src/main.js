@@ -19,36 +19,22 @@ function setStatus(message, type = '') {
   status.className = type;
 }
 function render() {
-  for (const button of document.querySelectorAll('[data-game]')) {
-    const selected = button.dataset.game === state.game;
-    button.classList.toggle('active', selected);
-    button.setAttribute('aria-pressed', String(selected));
-  }
-  for (const button of document.querySelectorAll('[data-direction]')) {
-    const selected = button.dataset.direction === state.direction;
-    button.classList.toggle('active', selected);
-    button.setAttribute('aria-pressed', String(selected));
-  }
   const toPsp = state.direction === 'replay-to-psp';
   const verified = (state.game === 'p1' && toPsp) || (state.game === 'p2' && !toPsp);
-  byId('support-badge').textContent = verified ? 'In-game verified' : 'Experimental direction';
-  byId('support-badge').className = `support-badge ${verified ? 'verified' : 'experimental'}`;
   byId('support-description').textContent = verified
-    ? `${label(state.game)} ${toPsp ? 'Replay → PSP' : 'PSP → Replay'} loaded successfully in game.`
-    : 'This direction uses the mapped fields but still needs an in-game load test.';
+    ? 'This direction has been loaded successfully in game.'
+    : 'Experimental: this direction has not been loaded in game yet.';
   byId('source-label').textContent = `${toPsp ? 'Replay' : 'PSP'} ${label(state.game)} save`;
-  byId('source-hint').textContent = toPsp ? 'Choose your .sav file' : 'Choose a savedata ZIP or SECURE.BIN';
-  byId('template-label').textContent = `${toPsp ? 'PSP' : 'Replay'} ${label(state.game)} template`;
-  byId('template-hint').textContent = toPsp ? 'ZIP the whole savedata folder' : 'Choose a target .sav file';
+  byId('source-hint').textContent = toPsp ? 'Choose your .sav file.' : 'Choose a savedata ZIP or SECURE.BIN.';
+  byId('template-label').textContent = `Fresh ${toPsp ? 'PSP' : 'Replay'} ${label(state.game)} save`;
+  byId('template-hint').textContent = toPsp ? 'ZIP the whole savedata folder from the target game.' : 'Choose a fresh .sav from the target game.';
   source.accept = toPsp ? '.sav' : '.zip,.bin';
   template.accept = toPsp ? '.zip' : '.sav';
   byId('slot-row').hidden = !toPsp;
   byId('slot-prefix').textContent = state.game === 'p1' ? 'UCUS98711_DATA' : 'UCUS98732_DATA';
   source.value = '';
   template.value = '';
-  byId('source-name').textContent = 'No file selected';
-  byId('template-name').textContent = 'No file selected';
-  setStatus('Ready when your files are selected.');
+  setStatus('');
 }
 function download(blob, filename) {
   const url = URL.createObjectURL(blob);
@@ -91,14 +77,8 @@ async function convert() {
     download(zip, `${slot}.zip`);
   }
 }
-for (const button of document.querySelectorAll('[data-game]')) {
-  button.addEventListener('click', () => { state.game = button.dataset.game; render(); });
-}
-for (const button of document.querySelectorAll('[data-direction]')) {
-  button.addEventListener('click', () => { state.direction = button.dataset.direction; render(); });
-}
-source.addEventListener('change', () => { byId('source-name').textContent = source.files?.[0]?.name ?? 'No file selected'; });
-template.addEventListener('change', () => { byId('template-name').textContent = template.files?.[0]?.name ?? 'No file selected'; });
+byId('game-select').addEventListener('change', (event) => { state.game = event.target.value; render(); });
+byId('direction-select').addEventListener('change', (event) => { state.direction = event.target.value; render(); });
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   convertButton.disabled = true;

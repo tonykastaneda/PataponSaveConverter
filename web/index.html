@@ -3,61 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#101926" />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="description" content="Convert Patapon 1 and 2 saves between PSP and Patapon 1+2 Replay in your browser." />
     <title>Patapon Save Converter</title>
   </head>
   <body>
-    <main class="shell">
-      <header class="site-header">
-        <a class="brand" href="#top" aria-label="Patapon Save Converter home"><span class="brand-mark">P</span><span>Patapon Save Converter</span></a>
-        <a class="github-link" href="https://github.com/tonykastaneda/PataponSaveConverter" target="_blank" rel="noopener noreferrer">View source <span aria-hidden="true">↗</span></a>
-      </header>
+    <main>
+      <h1>Patapon Save Converter</h1>
+      <p class="intro">Convert a Patapon 1 or 2 save between Replay and PSP.</p>
 
-      <section class="intro" id="top">
-        <div class="intro-copy">
-          <div class="eyebrow"><span class="pulse"></span> SAVE TRANSFER WORKSHOP</div>
-          <h1>Take your army<br/><em>where you play.</em></h1>
-          <p>Move Patapon 1 or 2 save data between the original PSP games and Patapon 1+2 Replay. Your files stay on this device.</p>
-          <div class="intro-points"><span>◆ Local conversion</span><span>◆ Original files untouched</span><span>◆ No account needed</span></div>
+      <form id="converter-form">
+        <label for="game-select">Game</label>
+        <select id="game-select">
+          <option value="p1">Patapon 1</option>
+          <option value="p2">Patapon 2</option>
+        </select>
+
+        <label for="direction-select">Convert to</label>
+        <select id="direction-select">
+          <option value="replay-to-psp">PSP</option>
+          <option value="psp-to-replay">Replay (PC)</option>
+        </select>
+        <p id="support-description" class="note"></p>
+
+        <label id="source-label" for="source-file">Replay save (.sav)</label>
+        <input id="source-file" type="file" accept=".sav" required />
+        <p id="source-hint" class="hint">Choose the save you want to convert.</p>
+
+        <label id="template-label" for="template-file">Fresh PSP save (ZIP)</label>
+        <input id="template-file" type="file" accept=".zip" required />
+        <p id="template-hint" class="hint">ZIP the whole savedata folder from a fresh save in the target game.</p>
+
+        <div id="slot-row">
+          <label for="slot-number">Output PSP slot</label>
+          <div class="slot-input"><span id="slot-prefix">UCUS98711_DATA</span><input id="slot-number" type="text" inputmode="numeric" maxlength="2" pattern="[0-9]{2}" value="02" /></div>
         </div>
-        <div class="rhythm-card" aria-hidden="true">
-          <div class="rhythm-top"><span>TRANSFER SIGNAL</span><span>01—02</span></div>
-          <div class="rhythm-art"><span class="beat b1"></span><span class="beat b2"></span><span class="beat b3"></span><span class="beat b4"></span></div>
-          <div class="rhythm-bottom"><span>DON</span><span>DON</span><span>PATA</span><span>PON</span></div>
-        </div>
-      </section>
 
-      <section class="converter" aria-labelledby="convert-title">
-        <div class="section-heading"><div><div class="section-kicker">01 / CONFIGURE</div><h2 id="convert-title">Build a converted save</h2></div><span class="privacy-pill">Runs in your browser</span></div>
-        <form id="converter-form">
-          <div class="choice-group">
-            <div class="field-title">Choose the game</div>
-            <div class="segmented" role="group" aria-label="Game">
-              <button type="button" class="segment active" data-game="p1" aria-pressed="true"><strong>Patapon 1</strong><small>Original / Replay</small></button>
-              <button type="button" class="segment" data-game="p2" aria-pressed="false"><strong>Patapon 2</strong><small>Original / Replay</small></button>
-            </div>
-          </div>
-          <div class="choice-group">
-            <div class="field-title">Choose the direction</div>
-            <div class="segmented" role="group" aria-label="Conversion direction">
-              <button type="button" class="segment active" data-direction="replay-to-psp" aria-pressed="true"><strong>Replay <span aria-hidden="true">→</span> PSP</strong><small>Download PSP savedata ZIP</small></button>
-              <button type="button" class="segment" data-direction="psp-to-replay" aria-pressed="false"><strong>PSP <span aria-hidden="true">→</span> Replay</strong><small>Download Replay .sav</small></button>
-            </div>
-            <p class="support-line"><span id="support-badge" class="support-badge verified">In-game verified</span><span id="support-description">Patapon 1 Replay → PSP loaded successfully in PPSSPP.</span></p>
-          </div>
-          <div class="upload-grid">
-            <label class="upload-box" for="source-file"><span class="upload-number">A / SOURCE SAVE</span><span class="upload-icon" aria-hidden="true">↥</span><strong id="source-label">Replay Patapon 1 save</strong><span id="source-hint">Choose your .sav file</span><span id="source-name" class="file-name">No file selected</span><input id="source-file" type="file" accept=".sav" required /></label>
-            <label class="upload-box" for="template-file"><span class="upload-number">B / TARGET TEMPLATE</span><span class="upload-icon" aria-hidden="true">▣</span><strong id="template-label">Fresh PSP Patapon 1 save</strong><span id="template-hint">ZIP the whole savedata folder</span><span id="template-name" class="file-name">No file selected</span><input id="template-file" type="file" accept=".zip" required /></label>
-          </div>
-          <p class="template-note">The target template supplies game settings and fields we have not mapped yet. Make one fresh save in the target game, then use that file or folder here.</p>
-          <div id="slot-row" class="slot-row"><label for="slot-number">Output PSP slot</label><div class="slot-control"><span id="slot-prefix">UCUS98711_DATA</span><input id="slot-number" type="text" inputmode="numeric" maxlength="2" pattern="[0-9]{2}" value="02" aria-describedby="slot-help" /></div><small id="slot-help">Choose a slot you can recognize. The download will contain this folder name.</small></div>
-          <div class="action-row"><button id="convert-button" class="convert-button" type="submit">Convert save <span aria-hidden="true">↗</span></button><div id="status" role="status" aria-live="polite">Ready when your files are selected.</div></div>
-        </form>
-      </section>
+        <button id="convert-button" type="submit">Convert and download</button>
+        <p id="status" role="status" aria-live="polite"></p>
+      </form>
 
-      <section class="guide" aria-labelledby="guide-title"><div class="section-kicker">02 / BEFORE YOU IMPORT</div><h2 id="guide-title">Keep a copy of your current save.</h2><div class="guide-grid"><div><span class="guide-number">01</span><h3>Get the source</h3><p>Replay saves are <code>.sav</code> files. PSP saves live in a <code>UCUS…_DATA##</code> folder containing <code>SECURE.BIN</code>.</p></div><div><span class="guide-number">02</span><h3>Make a template</h3><p>Start the destination game once and save. For PSP, ZIP its whole savedata folder. For Replay, choose its <code>.sav</code> file.</p></div><div><span class="guide-number">03</span><h3>Test in game</h3><p>Download the conversion, back up your current destination save, then import and check units, inventory, and story progress.</p></div></div></section>
-      <footer><span>Patapon Save Converter · Community research project</span><span>Local files never leave your browser during conversion.</span></footer>
+      <p class="footer-note">A fresh target save is needed to preserve fields the converter does not map yet. Back up your saves and check the result in game. Files are processed on your device.</p>
+      <a href="https://github.com/tonykastaneda/PataponSaveConverter">Source and instructions</a>
     </main>
     <script type="module" src="/src/main.js"></script>
   </body>
