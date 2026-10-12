@@ -3,47 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#151515" />
     <meta name="description" content="Convert Patapon 1 and 2 saves between PSP and Patapon 1+2 Replay in your browser." />
     <title>Patapon Save Converter</title>
   </head>
   <body>
     <main>
       <h1>Patapon Save Converter</h1>
-      <p class="intro">Convert a Patapon 1 or 2 save between Replay and PSP.</p>
+      <p class="intro">Move a Patapon 1 or 2 save between PSP and Patapon 1+2 Replay on PC. Drop your save file to automatically detect and convert.</p>
 
       <form id="converter-form">
-        <label for="game-select">Game</label>
-        <select id="game-select">
-          <option value="p1">Patapon 1</option>
-          <option value="p2">Patapon 2</option>
-        </select>
-
-        <label for="direction-select">Convert to</label>
-        <select id="direction-select">
-          <option value="replay-to-psp">PSP</option>
-          <option value="psp-to-replay">Replay (PC)</option>
-        </select>
-        <p id="support-description" class="note"></p>
-
-        <label id="source-label" for="source-file">Replay save (.sav)</label>
-        <input id="source-file" type="file" accept=".sav" required />
-        <p id="source-hint" class="hint">Choose the save you want to convert.</p>
-
-        <label id="template-label" for="template-file">Fresh PSP save (ZIP)</label>
-        <input id="template-file" type="file" accept=".zip" required />
-        <p id="template-hint" class="hint">ZIP the whole savedata folder from a fresh save in the target game.</p>
-
-        <div id="slot-row">
-          <label for="slot-number">Output PSP slot</label>
-          <div class="slot-input"><span id="slot-prefix">UCUS98711_DATA</span><input id="slot-number" type="text" inputmode="numeric" maxlength="2" pattern="[0-9]{2}" value="02" /></div>
+        <!-- Single Drag & Drop Area -->
+        <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Drop save file here or click to browse">
+          <input id="file-input" type="file" accept=".sav,.zip,.bin" hidden />
+          <div class="drop-prompt">
+            <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <p class="drop-title">Drop your save file here, or <span class="browse-link">browse</span></p>
+            <p class="drop-subtitle">Accepts PC Replay <code>.sav</code> or PSP savedata <code>.zip</code> / folder / <code>SECURE.BIN</code></p>
+          </div>
         </div>
 
-        <button id="convert-button" type="submit">Convert and download</button>
+        <!-- Detection Card (shown when a save is detected) -->
+        <div id="detection-card" class="detection-card" hidden>
+          <div class="card-header">
+            <div class="file-info">
+              <span id="card-filename" class="file-name">save.sav</span>
+              <span id="card-filesize" class="file-size">0 KB</span>
+            </div>
+            <button id="clear-button" type="button" class="btn-clear" title="Choose different file">✕</button>
+          </div>
+
+          <div class="conversion-summary">
+            <div class="summary-col">
+              <span class="summary-label">Detected Source</span>
+              <div id="source-badge" class="badge">Patapon 1 • PC Replay</div>
+            </div>
+            <div class="summary-arrow">➔</div>
+            <div class="summary-col">
+              <span class="summary-label">Output Target</span>
+              <div id="target-badge" class="badge target">PSP Save (ZIP)</div>
+            </div>
+          </div>
+
+          <!-- Slot customization (shown only when converting to PSP) -->
+          <div id="slot-row" class="slot-row" hidden>
+            <label for="slot-number">Output PSP Slot</label>
+            <div class="slot-input">
+              <span id="slot-prefix">UCUS98711_DATA</span>
+              <input id="slot-number" type="text" inputmode="numeric" maxlength="2" pattern="[0-9]{2}" value="01" />
+            </div>
+          </div>
+        </div>
+
+        <button id="convert-button" type="submit" disabled>Convert save</button>
         <p id="status" role="status" aria-live="polite"></p>
       </form>
 
-      <p class="footer-note">A fresh target save is needed to preserve fields the converter does not map yet. Back up your saves and check the result in game. Files are processed on your device.</p>
+      <p class="footer-note">Files are processed entirely on your device. Back up your existing saves before replacing them.</p>
       <a href="https://github.com/tonykastaneda/PataponSaveConverter">Source and instructions</a>
     </main>
     <script type="module" src="/src/main.js"></script>

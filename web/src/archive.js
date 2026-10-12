@@ -38,6 +38,7 @@ export async function readPspInput(file, game, requireTemplate = false) {
   return result;
 }
 function replaceBytes(bytes, oldText, newText) {
+  if (oldText === newText) return bytes.slice();
   const oldBytes = new TextEncoder().encode(oldText);
   const newBytes = new TextEncoder().encode(newText);
   if (oldBytes.length !== newBytes.length) throw new Error('PSP slot names must have equal length.');
