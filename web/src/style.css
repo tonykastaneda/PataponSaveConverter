@@ -147,7 +147,9 @@ button { font: inherit; color: inherit; }
 .drop {
   position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: calc(27 * var(--u)); cursor: pointer;
+  transition: background-color .15s;
 }
+.drop:hover, .drop:focus-visible { background: #f7fa8a; }
 
 /* Connected-PSP header */
 .header {
