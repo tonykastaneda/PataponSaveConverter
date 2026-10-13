@@ -26,7 +26,7 @@ PSP saves (`UCUS98711` for P1 and `UCUS98732` for P2).
 
 **PSP → Replay**
 1. Either drop a PSP save on **Upload Save** (a ZIP of its `UCUS…_DATA##` folder or a
-   standalone `SECURE.BIN`), or put the PSP in USB mode and click **Browse Saves**, choose
+   standalone `SECURE.BIN`), or put the PSP in USB mode and click **Connect**, choose
    the PSP's drive, then pick a save from the list and click **Select**.
 2. Click **Convert** to download the Replay `.sav`.
 

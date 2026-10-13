@@ -18,7 +18,7 @@ import logoP2Replay from './assets/logo-p2-replay.svg';
 import psLogo from './assets/ps-logo.svg';
 import pspLogo from './assets/psp-logo.svg';
 import pspMini from './assets/psp-mini.svg';
-import textBrowseSaves from './assets/text-browse-saves.svg';
+import textConnect from './assets/text-connect.svg';
 import textConvert from './assets/text-convert.svg';
 import textSelect from './assets/text-select.svg';
 import textUploadSave from './assets/text-upload-save.svg';
@@ -149,8 +149,8 @@ function renderHome() {
     if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); input.click(); }
   });
   card.replaceChildren(drop);
-  const browse = button('Browse saves on a connected PSP', browsePsp,
-    art(textBrowseSaves, 217.9), pspPair());
+  const browse = button('Connect a PSP and browse its saves', browsePsp,
+    art(textConnect, 132.8, '', 'Connect'), pspPair());
   actions.replaceChildren(browse);
 }
 
