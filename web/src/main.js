@@ -374,6 +374,13 @@ copyPath.addEventListener('click', async () => {
   setTimeout(() => { copyPath.textContent = 'Copy'; }, 1600);
 });
 
+document.addEventListener('click', (event) => {
+  if (savePath.open && !savePath.contains(event.target)) savePath.open = false;
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && savePath.open) { savePath.open = false; event.stopImmediatePropagation(); }
+}, true);
+
 // ---------- Upload and drag-and-drop ----------
 input.addEventListener('change', () => { openFile(input.files?.[0]); input.value = ''; });
 let dragDepth = 0;

@@ -29,17 +29,29 @@ button { font: inherit; color: inherit; }
 }
 .ui {
   position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center;
-  padding: clamp(12px, calc(15svh - 106px), 160px) 16px 0;
+  padding: clamp(12px, calc(15svh - 42px), 223px) 16px 0;
 }
 
-/* Copyable Replay save folder, pasted into File Explorer's address bar */
+/* Copyable Replay save folder, pasted into File Explorer's address bar; collapsed by default */
+.save-path-box { position: relative; z-index: 5; display: flex; justify-content: center; margin-bottom: 14px; }
+.save-path-box[hidden] { display: none; }
+.save-path-toggle {
+  list-style: none; cursor: pointer; padding: 5px 14px; border-radius: 999px; font-size: 12px;
+  color: #fff; background: rgba(1, 42, 62, .55); text-shadow: 0 1px 0 #012a3e;
+}
+.save-path-toggle::-webkit-details-marker { display: none; }
+.save-path-toggle::after { content: " ▾"; }
+.save-path-box[open] .save-path-toggle::after { content: " ▴"; }
+.save-path-toggle:hover { background: rgba(1, 42, 62, .8); }
+.save-path-toggle:focus-visible { outline: 3px solid #f0f660; outline-offset: 2px; }
+/* Drops down over the card so opening it doesn't shift the layout. */
+.save-path-box .save-path { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
 .save-path {
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; width: calc(549.5 * var(--u));
-  margin-bottom: 18px; padding: 8px 8px 8px 14px; background: var(--cream);
+  padding: 8px 8px 8px 14px; background: var(--cream);
   border: calc(1.72 * var(--u)) solid var(--ink); border-radius: calc(8.7 * var(--u));
   box-shadow: calc(4 * var(--u)) calc(4 * var(--u)) 0 var(--ink);
 }
-.save-path[hidden] { display: none; }
 .save-path-label { flex: 1; font-size: 12px; }
 .save-path-text {
   order: 1; flex-basis: 100%; overflow-wrap: anywhere; line-height: 1.4;
