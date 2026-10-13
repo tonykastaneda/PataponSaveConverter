@@ -11,6 +11,7 @@ import iconDownload from './assets/icon-download.svg';
 import iconUpload from './assets/icon-upload.svg';
 import iconUsb from './assets/icon-usb.svg';
 import logoP1 from './assets/logo-p1.svg';
+import logoP1Outline from './assets/logo-p1-outline.svg';
 import logoP1Replay from './assets/logo-p1-replay.svg';
 import logoP1White from './assets/logo-p1-white.svg';
 import logoP2 from './assets/logo-p2.svg';
@@ -54,7 +55,7 @@ const state = { screen: 'home', savedata: null, saves: [], selected: 0, source: 
 // The scene's flicker and twinkle live inside the SVG, where the page's reduced-motion
 // CSS can't reach, so pick the still copy up front.
 const sceneUrl = matchMedia('(prefers-reduced-motion: reduce)').matches ? sceneStill : sceneAnimated;
-for (const [id, src] of [['scene', sceneUrl], ['brand', logoP1White], ['esrb', esrb], ['psp-logo', pspLogo],
+for (const [id, src] of [['scene', sceneUrl], ['brand', logoP1Outline], ['esrb', esrb], ['psp-logo', pspLogo],
   ['ps-logo', psLogo], ['bandai', bandai]]) byId(id).src = src;
 // Warm the cache so later screens don't pop their art in.
 for (const src of [arrowBig, arrowSmall, bannerP2Bg, iconCheck, iconDownload, logoP1, logoP1Replay,
