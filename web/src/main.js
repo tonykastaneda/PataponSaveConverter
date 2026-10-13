@@ -53,7 +53,7 @@ const state = { screen: 'home', savedata: null, saves: [], selected: 0, source: 
 // The scene's flicker and twinkle live inside the SVG, where the page's reduced-motion
 // CSS can't reach, so pick the still copy up front.
 const sceneUrl = matchMedia('(prefers-reduced-motion: reduce)').matches ? sceneStill : sceneAnimated;
-for (const [id, src] of [['scene', sceneUrl], ['esrb', esrb], ['psp-logo', pspLogo],
+for (const [id, src] of [['scene', sceneUrl], ['brand', logoP1White], ['esrb', esrb], ['psp-logo', pspLogo],
   ['ps-logo', psLogo], ['bandai', bandai]]) byId(id).src = src;
 // Warm the cache so later screens don't pop their art in.
 for (const src of [arrowBig, arrowSmall, bannerP2Bg, iconCheck, iconDownload, logoP1, logoP1Replay,
