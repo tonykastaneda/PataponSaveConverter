@@ -32,10 +32,12 @@ button { font: inherit; color: inherit; }
   padding: clamp(12px, calc(15svh - 108px), 157px) 16px 0;
 }
 
-/* Base Patapon logo: white with a hard black offset, like the cards */
+/* Base Patapon logo: white with a black outline (zero-blur shadows on every side) */
 .brand {
+  --o: max(1.5px, calc(3 * var(--u)));
   width: calc(260 * var(--u)); margin-bottom: 14px; user-select: none; pointer-events: none;
-  filter: drop-shadow(calc(5 * var(--u)) calc(5 * var(--u)) 0 var(--ink));
+  filter: drop-shadow(var(--o) 0 0 var(--ink)) drop-shadow(calc(-1 * var(--o)) 0 0 var(--ink))
+    drop-shadow(0 var(--o) 0 var(--ink)) drop-shadow(0 calc(-1 * var(--o)) 0 var(--ink));
 }
 
 /* Copyable Replay save folder, pasted into File Explorer's address bar; collapsed by default */
