@@ -33,7 +33,7 @@ button { font: inherit; color: inherit; }
 }
 
 /* Base Patapon logo: white with a black outline (logo-p1-outline.svg, made in Illustrator) */
-.brand { width: calc(276 * var(--u)); margin-bottom: 14px; user-select: none; pointer-events: none; }
+.brand { width: calc(281 * var(--u)); margin-bottom: 14px; user-select: none; pointer-events: none; }
 
 /* Copyable Replay save folder, pasted into File Explorer's address bar; collapsed by default */
 .save-path-box { position: relative; z-index: 5; display: flex; justify-content: center; margin-top: 18px; }
