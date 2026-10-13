@@ -5,7 +5,7 @@
   --ink: #000;
   --green: #75d613;
   --sky: #0c5e7e;
-  --footer-h: clamp(82px, 7.6vw, 194.5px);
+  --footer-h: clamp(82px, 7.6vw, 116px);
   color-scheme: light;
   font-family: "Mochiy Pop One", system-ui, sans-serif;
 }
@@ -118,21 +118,24 @@ button { font: inherit; color: inherit; }
 .status.error { color: #ffd23a; }
 
 /* Footer */
-.footer {
-  height: var(--footer-h); display: flex; align-items: center; padding: 0 2.3vw; background: #000;
+.footer { height: var(--footer-h); display: flex; justify-content: center; background: #000; }
+/* Logos sit in a centered container instead of running edge to edge. */
+.footer-inner {
+  width: 100%; max-width: 1280px; display: flex; align-items: center; padding: 0 24px;
 }
-.esrb { height: clamp(46px, 4.23vw, 108.4px); }
-.psp-logo { height: clamp(30px, 2.94vw, 75.2px); margin-left: 4.65vw; }
-.ps-logo { height: clamp(30px, 2.93vw, 75px); margin-left: 1.56vw; }
-.bandai { height: clamp(22px, 2.19vw, 56px); margin-left: auto; }
+.esrb { height: clamp(46px, 4.23vw, 64px); }
+.psp-logo { height: clamp(30px, 2.94vw, 44px); margin-left: clamp(16px, 4.65vw, 60px); }
+.ps-logo { height: clamp(30px, 2.93vw, 44px); margin-left: clamp(8px, 1.56vw, 20px); }
+.bandai { height: clamp(22px, 2.19vw, 33px); margin-left: auto; }
 .warning {
-  margin: 0 0 0 5.3vw; color: #fff; font: 700 clamp(10px, 1.02vw, 26px) "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 0 0 0 clamp(16px, 5.3vw, 68px); color: #fff;
+  font: 700 clamp(10px, 1.02vw, 15px) "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: .06em; text-transform: uppercase;
 }
 
 @media (max-width: 760px) {
   :root { --footer-h: 132px; }
-  .footer { flex-wrap: wrap; justify-content: center; gap: 10px 18px; padding: 12px 16px; }
+  .footer-inner { flex-wrap: wrap; justify-content: center; gap: 10px 18px; padding: 12px 16px; }
   .warning { order: -1; width: 100%; margin: 0; text-align: center; }
   .psp-logo, .ps-logo, .bandai { margin: 0; }
   .esrb { height: 50px; } .psp-logo, .ps-logo { height: 32px; } .bandai { height: 24px; }

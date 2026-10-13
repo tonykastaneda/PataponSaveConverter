@@ -1,5 +1,6 @@
 import './style.css';
-import sceneUrl from './assets/scene.svg';
+import sceneAnimated from './assets/scene.svg';
+import sceneStill from './assets/scene-still.svg';
 import arrowBig from './assets/arrow-big.svg';
 import arrowSmall from './assets/arrow-small.svg';
 import bandai from './assets/bandai.svg';
@@ -47,6 +48,9 @@ const platformName = (kind) => kind === 'psp' ? 'PSP' : 'Replay';
 // screen: home (upload or browse) → list (saves on the PSP) → confirm (convert)
 const state = { screen: 'home', savedata: null, saves: [], selected: 0, source: null, busy: false };
 
+// The scene's flicker and twinkle live inside the SVG, where the page's reduced-motion
+// CSS can't reach, so pick the still copy up front.
+const sceneUrl = matchMedia('(prefers-reduced-motion: reduce)').matches ? sceneStill : sceneAnimated;
 for (const [id, src] of [['scene', sceneUrl], ['esrb', esrb], ['psp-logo', pspLogo],
   ['ps-logo', psLogo], ['bandai', bandai]]) byId(id).src = src;
 // Warm the cache so later screens don't pop their art in.
