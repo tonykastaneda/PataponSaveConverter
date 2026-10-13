@@ -240,11 +240,12 @@ export function writePsp(template, replay, game) {
     writeUtf16(bytes, cfg.stringStart + i * cfg.stringSize, cfg.stringSize, value));
   return bytes;
 }
-export function writeReplay(template, pspBytes, game) {
+export function writeReplay(template, pspBytes, game, playTime = null) {
   const psp = readPsp(pspBytes, game);
   const replay = structuredClone(template);
   const global = replay?.laboGlobalDatas?.[0];
   if (!global || replay.laboGlobalDatas.length !== 1) throw new Error('Expected one Replay target slot.');
+  if (playTime !== null) global.playTime = playTime;
   const cfg = layout(game);
   const unit = global.gameGlobalData.unitGlobalData;
   const item = global.gameGlobalData.itemGlobalData;

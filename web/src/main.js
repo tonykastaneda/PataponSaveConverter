@@ -27,7 +27,8 @@ import textUploadSave from './assets/text-upload-save.svg';
 import { writePsp, writeReplay } from './format.js';
 import { decryptPsp, encryptPsp } from './crypto.js';
 import { decryptReplay, encryptReplay } from './replayCrypto.js';
-import { detectPspInput, createBlankPspTemplate, createPspZip } from './archive.js';
+import { detectPspInput, createBlankPspTemplate, createPspZip,
+  readPspPlayTime, setPspPlayTime } from './archive.js';
 import { pspSupported, checkPsp, connectPsp, listSaves, freeSlotNumber, writeSave } from './pspDevice.js';
 import { describeSfo, formatDate } from './sfo.js';
 
@@ -263,7 +264,7 @@ async function readUpload(file) {
     }
   }
   const { game, psp } = await detectPspInput(file);
-  return { kind: 'psp', game, secure: psp.secure, slot: psp.slot,
+  return { kind: 'psp', game, secure: psp.secure, sfo: psp.sfo, slot: psp.slot,
     label: psp.slot ? `Save ${psp.slot.slice(-2)}` : 'PSP save',
     ...describeSfo(psp.sfo, file.lastModified) };
 }
@@ -318,7 +319,9 @@ function download(blob, filename) {
 async function buildPsp(source, number) {
   const template = createBlankPspTemplate(source.game, number);
   const converted = writePsp(template.plain, source.doc, source.game);
-  const encrypted = await encryptPsp(converted, template.sfo, source.game);
+  const playTime = source.doc?.laboGlobalDatas?.[0]?.playTime;
+  const sfo = setPspPlayTime(template.sfo, playTime);
+  const encrypted = await encryptPsp(converted, sfo, source.game);
   const check = await decryptPsp(encrypted.secure, source.game);
   if (check.length !== converted.length || check.some((value, index) => value !== converted[index])) {
     throw new Error('PSP encryption check failed.');
@@ -334,12 +337,13 @@ async function run(task) {
 }
 
 const convertToReplay = () => run(async () => {
-  const { game, secure } = state.source;
+  const { game, secure, sfo } = state.source;
   setStatus('Converting to Replay…');
   const plain = await decryptPsp(secure, game);
   const response = await fetch(`./templates/${game}.replay.json`);
   if (!response.ok) throw new Error('The built-in Replay template could not be loaded.');
-  const encoded = await encryptReplay(writeReplay(await response.json(), plain, game));
+  const playTime = sfo ? readPspPlayTime(sfo) : null;
+  const encoded = await encryptReplay(writeReplay(await response.json(), plain, game, playTime));
   download(new Blob([encoded], { type: 'application/octet-stream' }), `patapon 1+2 replay_savedata_${game}.sav`);
   setStatus(`${GAME_NAME[game]} Replay save downloaded.`);
 });

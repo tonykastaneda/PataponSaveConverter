@@ -9,6 +9,7 @@ $ErrorActionPreference = 'Stop'
 $toolDir = $PSScriptRoot
 $codec = Join-Path $toolDir 'ReplaySave.ps1'
 $mapper = Join-Path $toolDir 'make_p1_psp_candidate.py'
+$metadataTool = Join-Path $toolDir 'psp_metadata.py'
 $pspTool = Join-Path $toolDir 'psp-save-reference\psp-save.exe'
 $replay = [IO.Path]::GetFullPath($ReplaySavePath)
 $template = [IO.Path]::GetFullPath($PspTemplateFolder)
@@ -62,6 +63,8 @@ try {
     }
     $sfoText = $sfoText.Replace($oldSlot, $slot)
     [IO.File]::WriteAllBytes($candidateSfoInput, [Text.Encoding]::Latin1.GetBytes($sfoText))
+    & python $metadataTool set-from-replay $candidateSfoInput $replayJson
+    if ($LASTEXITCODE -ne 0) { throw 'PSP play-time metadata update failed.' }
 
     & $pspTool -e $keyFile 5 $candidatePlain $candidateSecure SECURE.BIN $candidateSfoInput $candidateSfo
     if ($LASTEXITCODE -ne 0) { throw 'PSP candidate encryption failed.' }

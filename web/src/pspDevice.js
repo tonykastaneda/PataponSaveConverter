@@ -3,7 +3,7 @@
 // next visit only needs a permission prompt instead of the picker.
 import { describeSfo } from './sfo.js';
 
-const SAVE_DIR = /^UCUS987(11|32)_DATA(\d\d)$/i;
+const SAVE_DIR = /^(UCUS98711|UCJS10077|UCUS98732|UCJS10089)_DATA(\d\d)$/i;
 const DB_NAME = 'patapon-save-converter';
 const STORE = 'handles';
 const KEY = 'psp';
@@ -162,10 +162,11 @@ export async function listSaves(savedata) {
     const sfo = sfoHandle ? (await readBytes(sfoHandle)).bytes : undefined;
     saves.push({
       kind: 'psp',
-      game: match[1] === '11' ? 'p1' : 'p2',
+      game: /(?:98711|10077)$/i.test(match[1]) ? 'p1' : 'p2',
       slot: name.toUpperCase(),
       label: `Save ${match[2]}`,
       secure: secure.bytes,
+      sfo,
       ...describeSfo(sfo, secure.modified),
     });
   }

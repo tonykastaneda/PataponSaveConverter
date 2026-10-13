@@ -1,7 +1,87 @@
 import JSZip from 'jszip';
 
-const slotPrefix = { p1: 'UCUS98711', p2: 'UCUS98732' };
+const slotPrefixes = {
+  p1: ['UCUS98711', 'UCJS10077'],
+  p2: ['UCUS98732', 'UCJS10089'],
+};
 const required = ['SECURE.BIN', 'PARAM.SFO', 'ICON0.PNG'];
+const utf8 = new TextDecoder('utf-8', { fatal: true });
+const playTimePatterns = [
+  /Play time:\s*(\d+):(\d{2}):(\d{2})/,
+  /プレイ時間[：:]\s*(\d+)時間(\d{1,2})分(\d{1,2})秒/,
+];
+
+function sfoEntries(bytes) {
+  const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  if (bytes.length < 0x14 || data.getUint32(0, true) !== 0x46535000) {
+    throw new Error('The PSP PARAM.SFO is invalid.');
+  }
+  const keyStart = data.getUint32(8, true);
+  const valueStart = data.getUint32(12, true);
+  const count = data.getUint32(16, true);
+  const entries = [];
+  for (let index = 0; index < count; index++) {
+    const entry = 0x14 + index * 0x10;
+    const keyOffset = data.getUint16(entry, true);
+    let keyEnd = keyStart + keyOffset;
+    while (keyEnd < bytes.length && bytes[keyEnd]) keyEnd++;
+    const key = new TextDecoder('ascii').decode(bytes.subarray(keyStart + keyOffset, keyEnd));
+    entries.push({ key, entry, used: data.getUint32(entry + 4, true),
+      maximum: data.getUint32(entry + 8, true),
+      offset: valueStart + data.getUint32(entry + 12, true) });
+  }
+  return entries;
+}
+
+function savedataDetail(sfo) {
+  const field = sfoEntries(sfo).find(({ key }) => key === 'SAVEDATA_DETAIL');
+  if (!field) throw new Error('The PSP PARAM.SFO has no save detail field.');
+  let end = field.offset + field.used;
+  while (end > field.offset && sfo[end - 1] === 0) end--;
+  return { field, text: utf8.decode(sfo.subarray(field.offset, end)) };
+}
+
+function matchPlayTime(text) {
+  for (const pattern of playTimePatterns) {
+    const match = pattern.exec(text);
+    if (match) return match;
+  }
+  return null;
+}
+
+export function readPspPlayTime(sfo) {
+  const match = matchPlayTime(savedataDetail(sfo).text);
+  if (!match) throw new Error('The PSP save metadata has no play-time value.');
+  const [hours, minutes, seconds] = match.slice(1).map(Number);
+  if (minutes >= 60 || seconds >= 60) throw new Error('The PSP play-time value is invalid.');
+  return ((hours * 60 + minutes) * 60 + seconds) * 1000;
+}
+
+export function setPspPlayTime(sfo, milliseconds) {
+  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    throw new Error('The Replay save has an invalid play-time value.');
+  }
+  const { field, text } = savedataDetail(sfo);
+  const match = matchPlayTime(text);
+  if (!match) throw new Error('The PSP save metadata has no play-time value to replace.');
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor(totalSeconds % 3600 / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (value) => String(value).padStart(2, '0');
+  const replacement = match[0].startsWith('プレイ時間')
+    ? `プレイ時間： ${hours}時間${pad(minutes)}分${pad(seconds)}秒`
+    : `Play time: ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  const encoded = new TextEncoder().encode(text.slice(0, match.index) + replacement +
+    text.slice(match.index + match[0].length) + '\0');
+  if (encoded.length > field.maximum) throw new Error('The PSP play-time text exceeds its metadata allocation.');
+  const result = sfo.slice();
+  result.fill(0, field.offset, field.offset + field.maximum);
+  result.set(encoded, field.offset);
+  new DataView(result.buffer, result.byteOffset, result.byteLength)
+    .setUint32(field.entry + 4, encoded.length, true);
+  return result;
+}
 
 export async function detectPspInput(file) {
   const name = file.name.toUpperCase();
@@ -13,9 +93,9 @@ export async function detectPspInput(file) {
   if (!name.endsWith('.ZIP')) throw new Error('Drop a Replay .sav, a PSP savedata ZIP, or SECURE.BIN.');
   const zip = await JSZip.loadAsync(await file.arrayBuffer());
   const paths = Object.keys(zip.files).map((path) => path.toUpperCase());
-  const game = paths.some((path) => path.includes('UCUS98711_DATA')) ? 'p1'
-    : paths.some((path) => path.includes('UCUS98732_DATA')) ? 'p2' : null;
-  if (!game) throw new Error('The ZIP is not a USA Patapon 1 or Patapon 2 savedata folder.');
+  const game = paths.some((path) => slotPrefixes.p1.some((prefix) => path.includes(`${prefix}_DATA`))) ? 'p1'
+    : paths.some((path) => slotPrefixes.p2.some((prefix) => path.includes(`${prefix}_DATA`))) ? 'p2' : null;
+  if (!game) throw new Error('The ZIP is not a supported Patapon 1 or Patapon 2 savedata folder.');
   return { game, psp: await readPspInput(file, game) };
 }
 
@@ -39,10 +119,10 @@ export async function readPspInput(file, game, requireTemplate = false) {
     if (sfoEntry) {
       const sfoBytes = await sfoEntry.async('uint8array');
       const text = new TextDecoder('latin1').decode(sfoBytes);
-      slot = text.match(new RegExp(`${slotPrefix[game]}_DATA[0-9][0-9]`, 'i'))?.[0];
+      slot = text.match(new RegExp(`(?:${slotPrefixes[game].join('|')})_DATA[0-9][0-9]`, 'i'))?.[0];
     }
   }
-  if (!new RegExp(`^${slotPrefix[game]}_DATA[0-9][0-9]$`, 'i').test(slot)) {
+  if (!new RegExp(`^(?:${slotPrefixes[game].join('|')})_DATA[0-9][0-9]$`, 'i').test(slot)) {
     throw new Error('The PSP save folder does not match the selected game.');
   }
   const result = { secure: new Uint8Array(await candidates[0].async('uint8array')), slot: slot.toUpperCase() };
@@ -72,7 +152,7 @@ function replaceBytes(bytes, oldText, newText) {
 }
 export function outputSlot(game, number) {
   if (!/^[0-9]{2}$/.test(number)) throw new Error('Enter a two digit PSP slot number.');
-  return `${slotPrefix[game]}_DATA${number}`;
+  return `${slotPrefixes[game][0]}_DATA${number}`;
 }
 export function renamePspSfo(sfo, oldSlot, newSlot) {
   return replaceBytes(sfo, oldSlot, newSlot);
@@ -94,7 +174,8 @@ export function createBlankPspTemplate(game, number = '99') {
   const entries = [
     ['CATEGORY', 0x0204, new TextEncoder().encode('MS\0'), 4],
     ['PARENTAL_LEVEL', 0x0404, Uint8Array.of(1, 0, 0, 0), 4],
-    ['SAVEDATA_DETAIL', 0x0204, new TextEncoder().encode('Converted with Patapon Save Converter\0'), 1024],
+    ['SAVEDATA_DETAIL', 0x0204,
+      new TextEncoder().encode('Converted with Patapon Save Converter\nPlay time: 00:00:00\0'), 1024],
     ['SAVEDATA_DIRECTORY', 0x0204, new TextEncoder().encode(`${slot}\0`), 64],
     ['SAVEDATA_FILE_LIST', 0x0004, new TextEncoder().encode('SECURE.BIN\0'), 3168],
     ['SAVEDATA_PARAMS', 0x0004, new Uint8Array(), 128],

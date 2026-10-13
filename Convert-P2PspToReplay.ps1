@@ -23,6 +23,9 @@ if (-not [IO.Directory]::Exists([IO.Path]::GetDirectoryName($output))) {
 if (-not [IO.File]::Exists((Join-Path $pspFolder 'SECURE.BIN'))) {
     throw 'PSP save folder is missing SECURE.BIN.'
 }
+if (-not [IO.File]::Exists((Join-Path $pspFolder 'PARAM.SFO'))) {
+    throw 'PSP save folder is missing PARAM.SFO.'
+}
 if (-not [IO.File]::Exists($template)) { throw "Replay P2 template not found: $template" }
 if (-not [IO.File]::Exists($pspTool)) {
     throw "Build psp-save.exe first, following README.md: $pspTool"
@@ -43,7 +46,8 @@ try {
     & $pspTool -d $keyFile 5 (Join-Path $pspFolder 'SECURE.BIN') $pspPlain
     if ($LASTEXITCODE -ne 0) { throw 'PSP save decryption failed.' }
     & $codec -Mode Export -InputPath $template -OutputPath $templateJson
-    & python $mapper $pspPlain $templateJson $candidateJson
+    & python $mapper $pspPlain $templateJson $candidateJson `
+        --param-sfo (Join-Path $pspFolder 'PARAM.SFO')
     if ($LASTEXITCODE -ne 0) { throw 'Patapon 2 field mapping failed.' }
     & $codec -Mode Import -InputPath $candidateJson -OutputPath $candidateSave
     & $codec -Mode Export -InputPath $candidateSave -OutputPath $roundtripJson

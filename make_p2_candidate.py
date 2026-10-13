@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 from inspect_p2_psp import parse
+from psp_metadata import read_play_time_ms
 
 
 def main() -> None:
@@ -18,6 +19,8 @@ def main() -> None:
     ap.add_argument("psp_plaintext", type=Path)
     ap.add_argument("replay_json", type=Path)
     ap.add_argument("output_json", type=Path)
+    ap.add_argument("--param-sfo", type=Path,
+                    help="PSP PARAM.SFO whose displayed play time should be transferred")
     args = ap.parse_args()
     if args.output_json.exists():
         ap.error(f"Output already exists: {args.output_json}")
@@ -28,6 +31,8 @@ def main() -> None:
     if len(globals_) != 1:
         raise ValueError("Expected exactly one Replay P2 global save")
     global_ = globals_[0]
+    if args.param_sfo:
+        global_["playTime"] = read_play_time_ms(args.param_sfo)
     unit = global_["gameGlobalData"]["unitGlobalData"]
     item = global_["gameGlobalData"]["itemGlobalData"]
     talk = global_["talkData"]
@@ -48,7 +53,10 @@ def main() -> None:
 
     args.output_json.write_text(json.dumps(replay, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"Wrote experimental JSON: {args.output_json}")
-    print("Mapped: units, inventory, four base fields, story buffers, 80 strings")
+    mapped = "units, inventory, four base fields, story buffers, 80 strings"
+    if args.param_sfo:
+        mapped += ", play time"
+    print(f"Mapped: {mapped}")
     print("Unmapped: later PSP save sections, settings, other unlock data")
 
 

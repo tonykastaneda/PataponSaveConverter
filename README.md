@@ -16,11 +16,13 @@ so no second upload or separate target template is needed.
 | Patapon 2 | PSP → Replay | In-game verified with one real save |
 | Patapon 2 | Replay → PSP | Experimental; binary mapping roundtrip verified |
 
-The converter maps units, inventory, base values, talk buffers, and strings.
+The converter maps units, inventory, base values, talk buffers, strings, and
+play time (when a PSP `PARAM.SFO` is included).
 Some later progress and settings fields are currently left at neutral defaults. The
 verified paths loaded the expected source saves in-game; that does not
 establish full coverage for every save or region. This version supports USA
-PSP saves (`UCUS98711` for P1 and `UCUS98732` for P2).
+PSP saves (`UCUS98711` for P1 and `UCUS98732` for P2). Japanese Patapon 2
+PSP input (`UCJS10089`) is also supported experimentally.
 
 ## Web app
 
