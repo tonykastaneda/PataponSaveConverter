@@ -109,6 +109,25 @@ button { font: inherit; color: inherit; }
 .no-psp .psp-status { display: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* "?" hint at the left of the Connect button */
+.help {
+  position: absolute; left: calc(22 * var(--u)); top: 50%; transform: translateY(-50%);
+  width: calc(24 * var(--u)); height: calc(24 * var(--u)); display: grid; place-items: center;
+  border: calc(1.72 * var(--u)) solid var(--ink); border-radius: 50%; background: var(--cream);
+  font-size: calc(14 * var(--u)); line-height: 1; cursor: help;
+}
+.help-tip {
+  position: absolute; bottom: calc(100% + 10px); left: -8px;
+  padding: 6px 12px; border-radius: 8px; background: var(--ink); color: #fff;
+  font-size: 12px; white-space: nowrap; pointer-events: none;
+  opacity: 0; visibility: hidden; transition: opacity .12s;
+}
+.help-tip::after {
+  content: ""; position: absolute; top: 100%; left: calc(8px + 12 * var(--u) - 6px);
+  border: 6px solid transparent; border-top-color: var(--ink);
+}
+.help:hover .help-tip, .help.show .help-tip { opacity: 1; visibility: visible; }
+
 /* Home: upload drop zone */
 .drop {
   position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;

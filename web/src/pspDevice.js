@@ -26,11 +26,14 @@ async function idb(mode, action) {
     request.onerror = () => reject(request.error);
   });
 }
-const loadHandle = () => idb('readonly', (store) => store.get(KEY)).catch(() => undefined);
-const saveHandle = (handle) => idb('readwrite', (store) => store.put(handle, KEY)).catch(() => undefined);
+const load = (key) => idb('readonly', (store) => store.get(key)).catch(() => undefined);
+const save = (key, value) => idb('readwrite', (store) => store.put(value, key)).catch(() => undefined);
+const PATH_KEY = 'psp-savedata-path';
 
 // Loaded early so a click can ask for permission without waiting on IndexedDB.
-let rememberedHandle = pspSupported ? loadHandle() : Promise.resolve(undefined);
+let rememberedHandle = pspSupported ? load(KEY) : Promise.resolve(undefined);
+// Folder names from the picked folder down to SAVEDATA, so polling skips the search.
+let rememberedPath = pspSupported ? load(PATH_KEY) : Promise.resolve(undefined);
 
 async function childDir(parent, name) {
   for await (const [entryName, entry] of parent.entries()) {
@@ -45,15 +48,61 @@ async function childFile(parent, name) {
   return undefined;
 }
 
-// Accept the drive root, its PSP folder, or SAVEDATA itself.
-async function findSavedata(handle) {
-  if (handle.name.toUpperCase() === 'SAVEDATA') return handle;
-  const direct = await childDir(handle, 'SAVEDATA');
-  if (direct) return direct;
-  const psp = await childDir(handle, 'PSP');
-  const nested = psp && await childDir(psp, 'SAVEDATA');
-  if (nested) return nested;
-  throw new Error('No PSP/SAVEDATA folder there. Put the PSP in USB mode and choose its drive.');
+// Any PSP save folder name (game ID), e.g. UCUS98732_DATA01 or ULUS10041SAVE.
+const ANY_SAVE_DIR = /^[A-Z]{4}\d{5}/i;
+const MAX_DEPTH = 5;
+const MAX_FOLDERS = 2000;
+
+// Search everything under the picked folder for the PSP's SAVEDATA. Prefers PSP/SAVEDATA,
+// then any SAVEDATA, then any folder holding Patapon saves (e.g. a backup copy).
+// Returns { savedata, path } where path is the folder names from the picked folder down.
+// Folders above the picked one are out of reach: the browser only grants what was picked.
+async function searchSavedata(picked) {
+  if (picked.name.toUpperCase() === 'SAVEDATA') return { savedata: picked, path: [] };
+  if (ANY_SAVE_DIR.test(picked.name)) {
+    throw new Error('That is a single save\'s folder. Choose the PSP itself (its drive) instead.');
+  }
+  const queue = [{ dir: picked, path: [], parent: '' }];
+  let anySavedata;
+  let holdsSaves;
+  for (let visited = 0; queue.length && visited < MAX_FOLDERS; visited++) {
+    const { dir, path, parent } = queue.shift();
+    if (path.length && dir.name.toUpperCase() === 'SAVEDATA') {
+      if (parent === 'PSP') return { savedata: dir, path };
+      anySavedata ??= { savedata: dir, path };
+      continue;
+    }
+    for await (const [name, entry] of dir.entries()) {
+      if (entry.kind !== 'directory') continue;
+      if (SAVE_DIR.test(name)) { holdsSaves ??= { savedata: dir, path }; continue; }
+      if (ANY_SAVE_DIR.test(name) || path.length >= MAX_DEPTH) continue;
+      queue.push({ dir: entry, path: [...path, name], parent: dir.name.toUpperCase() });
+    }
+  }
+  const found = anySavedata ?? holdsSaves;
+  if (found) return found;
+  throw new Error('No PSP SAVEDATA folder was found inside that folder. Put the PSP in USB mode and choose its drive.');
+}
+async function followPath(root, path) {
+  let dir = root;
+  for (const name of path) dir = await dir.getDirectoryHandle(name);
+  return dir;
+}
+async function findSavedata(root) {
+  const path = await rememberedPath;
+  if (Array.isArray(path)) {
+    try {
+      const dir = await followPath(root, path);
+      for await (const _ of dir.entries()) break; // throws if the PSP is unplugged
+      return dir;
+    } catch (error) {
+      if (error?.name !== 'NotFoundError' && error?.name !== 'TypeMismatchError') throw error;
+    }
+  }
+  const found = await searchSavedata(root);
+  rememberedPath = Promise.resolve(found.path);
+  await save(PATH_KEY, found.path);
+  return found.savedata;
 }
 
 async function hasPermission(handle) {
@@ -88,10 +137,12 @@ export async function connectPsp() {
     }
   }
   const picked = await window.showDirectoryPicker({ id: 'psp', mode: 'readwrite' });
-  const savedata = await findSavedata(picked);
+  const found = await searchSavedata(picked);
   rememberedHandle = Promise.resolve(picked);
-  await saveHandle(picked);
-  return savedata;
+  rememberedPath = Promise.resolve(found.path);
+  await save(KEY, picked);
+  await save(PATH_KEY, found.path);
+  return found.savedata;
 }
 
 async function readBytes(fileHandle) {

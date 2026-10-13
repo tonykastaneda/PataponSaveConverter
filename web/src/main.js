@@ -149,8 +149,12 @@ function renderHome() {
     if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); input.click(); }
   });
   card.replaceChildren(drop);
-  const browse = button('Connect a PSP and browse its saves', browsePsp,
-    art(textConnect, 132.8, '', 'Connect'), pspPair());
+  const help = el('span', 'help', '?', el('span', 'help-tip', 'Select PSP Root'));
+  help.setAttribute('aria-hidden', 'true');
+  // The hint shouldn't start a connection; a tap toggles it on touch screens.
+  help.addEventListener('click', (event) => { event.stopPropagation(); help.classList.toggle('show'); });
+  const browse = button('Connect a PSP and browse its saves. Select the PSP root folder.', browsePsp,
+    help, art(textConnect, 132.8, '', 'Connect'), pspPair());
   actions.replaceChildren(browse);
 }
 
