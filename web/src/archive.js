@@ -89,8 +89,8 @@ export async function createPspZip(slot, secure, sfo, icon) {
 const align4 = (value) => (value + 3) & ~3;
 const pngPixel = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+Xfc0WQAAAABJRU5ErkJggg==';
 
-export function createBlankPspTemplate(game) {
-  const slot = outputSlot(game, '99');
+export function createBlankPspTemplate(game, number = '99') {
+  const slot = outputSlot(game, number);
   const entries = [
     ['CATEGORY', 0x0204, new TextEncoder().encode('MS\0'), 4],
     ['PARENTAL_LEVEL', 0x0404, Uint8Array.of(1, 0, 0, 0), 4],

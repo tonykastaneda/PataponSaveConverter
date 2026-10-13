@@ -1,18 +1,142 @@
-:root{font-family:"Arial Black",Impact,Arial,sans-serif;color:#fff;background:#020303;color-scheme:dark}
-*{box-sizing:border-box}body{margin:0;background:#020303}
-.scene{position:relative;min-height:calc(100vh - 70px);overflow:hidden;background:radial-gradient(ellipse at 50% 100%,#87c976 0%,#399e90 28%,transparent 62%),linear-gradient(#0a687e 0%,#15919c 100%)}
-.scene:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#05313d55,transparent 32%,transparent 68%,#05313d55);pointer-events:none}
-.stars{position:absolute;inset:0;width:100%;height:55%;opacity:.2;fill:none;stroke:#d9f4f1;stroke-width:2}
-.sunset{position:absolute;left:50%;bottom:25px;width:min(72vw,950px);aspect-ratio:2/1;transform:translateX(-50%);border-radius:50% 50% 0 0;background:repeating-radial-gradient(ellipse at 50% 100%,#d1ed6f25 0 45px,#8acc7925 47px 88px)}
-.converter{position:relative;z-index:4;width:min(520px,calc(100% - 36px));margin:auto;padding:clamp(28px,5vh,52px) 0 355px;text-align:center}
-.converter h1{margin:0 0 20px;font-size:clamp(32px,5vw,50px);line-height:.92;letter-spacing:.015em}
-form{margin:auto}.drop-zone{display:flex;min-height:132px;align-items:center;justify-content:center;flex-direction:column;gap:6px;border:3px dashed #dff6ed99;border-radius:20px;background:#053846bb;color:#fff;cursor:pointer;transition:.15s}
-.drop-zone:hover,.drop-zone.dragging{border-color:#f5f366;background:#073f4d;transform:translateY(-2px)}.drop-zone strong{font-size:22px;letter-spacing:.04em}.drop-zone span{font-family:Arial,sans-serif;font-size:12px}.drop-zone input{position:absolute;width:1px;height:1px;opacity:0}
-.upload-icon{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-button{width:100%;margin-top:10px;padding:10px;border:0;background:transparent;color:#fff;font:900 20px "Arial Black",Impact,sans-serif;cursor:pointer}button:hover:not(:disabled){color:#f7f34e}button:disabled{opacity:.45;cursor:not-allowed}
-#status{min-height:18px;margin:9px 0 0;font:700 13px Arial,sans-serif}#status.error{color:#ffe0e0}#status.success{color:#f7f34e}
-.landscape{position:absolute;z-index:2;bottom:-2px;left:0;display:block;width:100%;height:min(46vw,490px);min-height:270px}.torch path:last-child{transform-box:fill-box;transform-origin:center bottom;animation:flame .18s steps(2,end) infinite alternate}
-footer{height:70px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 clamp(18px,4vw,60px);background:#020303;color:#aaa;font:400 14px Arial,sans-serif}footer a{display:block;width:20px;height:20px;color:#fff}footer svg{width:100%;height:100%;fill:currentColor}
-@keyframes flame{to{transform:scale(.9,1.08) rotate(2deg)}}
-@media(max-width:650px){.converter{padding-bottom:260px}.landscape{height:300px;width:135%;left:-18%}footer{font-size:12px}}
-@media(prefers-reduced-motion:reduce){.torch path:last-child{animation:none}}
+/* Sizes are the Illustrator mockup's points (2560×1440 artboards); --u is one point. */
+:root {
+  --u: min(1px, calc((100vw - 32px) / 557));
+  --cream: #ffffe1;
+  --ink: #000;
+  --green: #75d613;
+  --sky: #0c5e7e;
+  --footer-h: clamp(82px, 7.6vw, 194.5px);
+  color-scheme: light;
+  font-family: "Mochiy Pop One", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #000; }
+img { display: block; }
+button { font: inherit; color: inherit; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* Scene */
+.stage {
+  position: relative; overflow: hidden; background: var(--sky);
+  height: calc(100svh - var(--footer-h)); min-height: 540px;
+}
+.scene {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 100%; user-select: none; pointer-events: none;
+}
+.ui {
+  position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center;
+  padding: clamp(20px, 15svh, 265px) 16px 0;
+}
+
+/* Card and buttons: cream face, thin black stroke, hard black shadow */
+.card, .button {
+  position: relative; background: var(--cream); border: calc(1.72 * var(--u)) solid var(--ink);
+  border-radius: calc(8.7 * var(--u)); box-shadow: calc(7.2 * var(--u)) calc(6.4 * var(--u)) 0 var(--ink);
+}
+.card {
+  width: calc(549.5 * var(--u)); height: calc(319.7 * var(--u)); overflow: hidden;
+  transition: background-color .15s;
+}
+.card.dragging { background: #f7fa8a; }
+.actions {
+  display: flex; gap: calc(24.6 * var(--u)); width: calc(549.5 * var(--u));
+  margin-top: calc(17.6 * var(--u));
+}
+.button {
+  flex: 1; height: calc(74.5 * var(--u)); padding: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: calc(46 * var(--u));
+  transition: transform .08s, box-shadow .08s, background-color .15s;
+}
+.button:hover:not(:disabled) { background: #f7fa8a; }
+.button:active:not(:disabled) {
+  transform: translate(calc(4 * var(--u)), calc(4 * var(--u)));
+  box-shadow: calc(3.2 * var(--u)) calc(2.4 * var(--u)) 0 var(--ink);
+}
+.button:disabled { cursor: progress; opacity: .6; }
+.button:focus-visible, .drop:focus-visible, .row:focus-visible {
+  outline: 3px solid #f0f660; outline-offset: 3px;
+}
+.button .pair { display: flex; align-items: center; gap: calc(20 * var(--u)); }
+
+/* Home: upload drop zone */
+.drop {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: calc(27 * var(--u)); cursor: pointer;
+}
+
+/* Connected-PSP header */
+.header {
+  height: calc(72 * var(--u)); display: flex; align-items: center; justify-content: center;
+  gap: calc(15 * var(--u));
+}
+
+/* Save rows */
+.list {
+  position: absolute; top: calc(72 * var(--u)); left: 0; right: 0; bottom: 0;
+  overflow-y: auto; scrollbar-width: thin; display: flex; flex-direction: column; gap: calc(5 * var(--u));
+}
+.list.static { overflow: visible; bottom: auto; }
+.row {
+  position: relative; flex: none; display: flex; align-items: center; height: calc(101 * var(--u));
+  padding-left: calc(65.6 * var(--u)); text-align: left; background: none; border: 0; cursor: pointer;
+}
+.row.selected { background: var(--green); }
+.row .arrow { position: absolute; left: calc(15.9 * var(--u)); width: calc(40.7 * var(--u)); visibility: hidden; }
+.row.selected .arrow { visibility: visible; }
+.banner {
+  position: relative; flex: none; width: calc(174.9 * var(--u)); height: calc(86.3 * var(--u));
+  display: flex; align-items: center; justify-content: center; background: var(--ink); overflow: hidden;
+}
+.banner > .bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.banner > .logo { position: relative; }
+.meta { margin-left: calc(14.2 * var(--u)); line-height: 1.25; color: var(--ink); min-width: 0; }
+.meta strong { display: block; font-weight: 400; font-size: max(11px, calc(14 * var(--u))); }
+.meta span {
+  display: block; font-size: max(9px, calc(10 * var(--u))); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; max-width: calc(225 * var(--u));
+}
+.empty {
+  position: absolute; inset: calc(72 * var(--u)) calc(30 * var(--u)) 0; display: grid; place-items: center;
+  text-align: center; font-size: max(11px, calc(14 * var(--u)));
+}
+
+/* Conversion summary */
+.summary {
+  position: absolute; left: 0; right: 0; top: calc(173 * var(--u)); bottom: 0;
+  display: flex; align-items: center; justify-content: center; gap: calc(28 * var(--u));
+}
+
+.status {
+  min-height: 1.4em; margin: calc(22 * var(--u)) 0 0; max-width: calc(549.5 * var(--u));
+  text-align: center; color: #fff; font-size: max(12px, calc(15 * var(--u)));
+  text-shadow: 0 2px 0 #012a3e;
+}
+.status.error { color: #ffd23a; }
+
+/* Footer */
+.footer {
+  height: var(--footer-h); display: flex; align-items: center; padding: 0 2.3vw; background: #000;
+}
+.esrb { height: clamp(46px, 4.23vw, 108.4px); }
+.psp-logo { height: clamp(30px, 2.94vw, 75.2px); margin-left: 4.65vw; }
+.ps-logo { height: clamp(30px, 2.93vw, 75px); margin-left: 1.56vw; }
+.bandai { height: clamp(22px, 2.19vw, 56px); margin-left: auto; }
+.warning {
+  margin: 0 0 0 5.3vw; color: #fff; font: 700 clamp(10px, 1.02vw, 26px) "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: .06em; text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  :root { --footer-h: 132px; }
+  .footer { flex-wrap: wrap; justify-content: center; gap: 10px 18px; padding: 12px 16px; }
+  .warning { order: -1; width: 100%; margin: 0; text-align: center; }
+  .psp-logo, .ps-logo, .bandai { margin: 0; }
+  .esrb { height: 50px; } .psp-logo, .ps-logo { height: 32px; } .bandai { height: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button, .card { transition: none; }
+}

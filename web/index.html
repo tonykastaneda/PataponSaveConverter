@@ -1,15 +1,33 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#073341"><meta name="description" content="Convert Patapon saves between PSP and Patapon 1+2 Replay."><title>Patapon Save Converter</title></head><body>
-<main class="scene"><svg class="stars" viewBox="0 0 1600 500" preserveAspectRatio="none" aria-hidden="true"><path d="m95 72 8 8m0-8-8 8m130-42 6 6m0-6-6 6m165 104 9 9m0-9-9 9m113-92 7 7m0-7-7 7m160 61 8 8m0-8-8 8m191-78 7 7m0-7-7 7m133 129 8 8m0-8-8 8m147-150 7 7m0-7-7 7m152 81 8 8m0-8-8 8m128-121 7 7m0-7-7 7m134 154 8 8m0-8-8 8m-1292 72 6 6m0-6-6 6m244 70 7 7m0-7-7 7m246-50 5 5m0-5-5 5m249 81 8 8m0-8-8 8m238-75 6 6m0-6-6 6m232 72 8 8m0-8-8 8"/></svg>
-  <section class="converter" aria-labelledby="title"><h1 id="title">PATAPON<br>SAVE CONVERTER</h1>
-    <form id="converter-form"><label class="drop-zone" id="drop-zone" for="source-file"><svg class="upload-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5h14v-5"/></svg><strong>DROP SAVE</strong><span id="file-detail">.SAV / PSP SAVEDATA ZIP / SECURE.BIN</span><input id="source-file" type="file" accept=".sav,.zip,.bin" required></label><button id="convert-button" type="submit" disabled>CONVERT</button><p id="status" role="status" aria-live="polite"></p></form>
-  </section><div class="sunset" aria-hidden="true"></div>
-  <svg class="landscape" viewBox="0 0 1600 490" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs>
-    <g id="tree"><path d="M70 250v-90c0-34 16-50 34-73l10 5c-16 30-22 48-19 72v86z"/><path d="M1 96C15 45 55 18 108 22c55 4 89 32 99 74z"/><path d="M34 156c10-36 39-55 75-52 39 2 62 20 72 52z"/></g>
-  </defs>
-  <g fill="#0b6671" opacity=".55"><use href="#tree" transform="translate(-30 328) scale(.45)"/><use href="#tree" transform="translate(95 328) scale(.45)"/><use href="#tree" transform="translate(255 328) scale(.45)"/><use href="#tree" transform="translate(1110 328) scale(.45)"/><use href="#tree" transform="translate(1280 328) scale(.45)"/><use href="#tree" transform="translate(1460 328) scale(.45)"/></g>
-  <g fill="#064553" opacity=".82"><use href="#tree" transform="translate(-65 265) scale(.7)"/><use href="#tree" transform="translate(85 265) scale(.7)"/><use href="#tree" transform="translate(280 265) scale(.7)"/><use href="#tree" transform="translate(1070 265) scale(.7)"/><use href="#tree" transform="translate(1240 265) scale(.7)"/><use href="#tree" transform="translate(1430 265) scale(.7)"/></g>
-  <g fill="#052b39"><use href="#tree" transform="translate(-105 202) scale(.95)"/><use href="#tree" transform="translate(95 202) scale(.95)"/><use href="#tree" transform="translate(1260 202) scale(.95)"/><use href="#tree" transform="translate(1460 202) scale(.95)"/></g>
-  <path fill="#020303" d="M0 440h520l18-28h72l18-58h344l20 58h80l18 28h510v50H0z"/>
-  <path class="pedestal" fill="#020303" d="M690 397h220v47H690z"/>
-  <g class="torch" transform="translate(572 285)"><path d="M12 155V52h46v103M7 81h56M7 111h56M12 52h46" stroke="#020303" stroke-width="10" fill="none"/><path fill="#f4f14e" d="M35 51C8 42 20 20 43 0c-2 17 17 21 6 38 9-4 15-12 19-20 7 25-8 41-33 33z"/></g><g class="torch" transform="translate(966 285)"><path d="M12 155V52h46v103M7 81h56M7 111h56M12 52h46" stroke="#020303" stroke-width="10" fill="none"/><path fill="#f4f14e" d="M35 51C8 42 20 20 43 0c-2 17 17 21 6 38 9-4 15-12 19-20 7 25-8 41-33 33z"/></g></svg>
-</main><footer><span>Back up your original save before replacing it.</span><a href="https://github.com/tonykastaneda/PataponSaveConverter" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.5 11.5 0 0 0-3.64 22.4c.58.1.79-.25.79-.56v-2.24c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.57-.29-5.27-1.28-5.27-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.47.11-3.05 0 0 .97-.31 3.16 1.18A11 11 0 0 1 12 6.2c.98 0 1.96.13 2.88.39 2.19-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.71 5.39-5.29 5.68.42.36.79 1.06.79 2.14v3.27c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .8Z"/></svg></a></footer><script type="module" src="/src/main.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0c5e7e">
+  <meta name="description" content="Convert Patapon saves between PSP and Patapon 1+2 Replay.">
+  <title>Patapon Save Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="stage">
+    <img class="scene" id="scene" alt="" aria-hidden="true">
+    <section class="ui" aria-label="Patapon Save Converter">
+      <h1 class="visually-hidden">Patapon Save Converter</h1>
+      <div class="card" id="card"></div>
+      <div class="actions" id="actions"></div>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+  <footer class="footer">
+    <img class="esrb" id="esrb" alt="ESRB rating: Everyone. Comic Mischief, Mild Fantasy Violence, Mild Language">
+    <img class="psp-logo" id="psp-logo" alt="PlayStation Portable">
+    <img class="ps-logo" id="ps-logo" alt="PlayStation">
+    <p class="warning">Please back up your save manually before using</p>
+    <img class="bandai" id="bandai" alt="Bandai Namco">
+  </footer>
+  <input id="file-input" type="file" accept=".sav,.zip,.bin" hidden>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

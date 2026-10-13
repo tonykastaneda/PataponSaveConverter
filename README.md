@@ -24,12 +24,21 @@ PSP saves (`UCUS98711` for P1 and `UCUS98732` for P2).
 
 ## Web app
 
-1. Drop your save file into the drop zone (or click to browse).
-   - Replay uses a `.sav`.
-   - PSP uses a ZIP of its `UCUS…_DATA##` savedata folder or a standalone `SECURE.BIN`.
-2. The app automatically detects the game (Patapon 1 or 2) and source format, selecting the opposite format as the target.
-3. Click **Convert** to download your converted `.sav` or PSP savedata ZIP.
-4. Back up your existing destination save before importing and check progress in-game.
+**PSP → Replay**
+1. Either drop a PSP save on **Upload Save** (a ZIP of its `UCUS…_DATA##` folder or a
+   standalone `SECURE.BIN`), or put the PSP in USB mode and click **Browse Saves**, choose
+   the PSP's drive, then pick a save from the list and click **Select**.
+2. Click **Convert** to download the Replay `.sav`.
+
+**Replay → PSP**
+1. Drop a Replay `.sav` on **Upload Save**.
+2. Click **Convert** to download a PSP savedata ZIP, or click the **PSP** button to write the
+   save straight onto a connected PSP as a new `DATA##` slot. Existing slots are never overwritten.
+
+The game (Patapon 1 or 2) and direction are detected automatically. Connecting a PSP uses the
+File System Access API, so it works in Chrome and Edge on desktop; other browsers can still
+upload and download. Back up your existing destination save before importing and check
+progress in-game.
 
 To run locally:
 
