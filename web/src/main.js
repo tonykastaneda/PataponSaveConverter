@@ -15,6 +15,7 @@ import logoP1Replay from './assets/logo-p1-replay.svg';
 import logoP1White from './assets/logo-p1-white.svg';
 import logoP2 from './assets/logo-p2.svg';
 import logoP2Replay from './assets/logo-p2-replay.svg';
+import musicLoop from './assets/musicloop.mp3';
 import psLogo from './assets/ps-logo.svg';
 import pspLogo from './assets/psp-logo.svg';
 import pspMini from './assets/psp-mini.svg';
@@ -384,6 +385,27 @@ document.addEventListener('click', (event) => {
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && savePath.open) { savePath.open = false; event.stopImmediatePropagation(); }
 }, true);
+
+// ---------- Background music ----------
+const musicButton = byId('music');
+let music;
+function syncMusic() {
+  const playing = !music.paused;
+  musicButton.setAttribute('aria-pressed', String(playing));
+  musicButton.setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
+}
+// Loaded on first press so the page doesn't download the track for people who never play it.
+musicButton.addEventListener('click', () => {
+  if (!music) {
+    music = new Audio(musicLoop);
+    music.loop = true;
+    music.volume = 0.5;
+    music.addEventListener('play', syncMusic);
+    music.addEventListener('pause', syncMusic);
+  }
+  if (music.paused) music.play().catch(() => {});
+  else music.pause();
+});
 
 // ---------- Upload and drag-and-drop ----------
 input.addEventListener('change', () => { openFile(input.files?.[0]); input.value = ''; });

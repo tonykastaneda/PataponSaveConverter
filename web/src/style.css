@@ -70,6 +70,18 @@ button { font: inherit; color: inherit; }
 .save-path-copy:hover { background: #8ae62a; }
 .save-path-copy:focus-visible { outline: 3px solid #f0f660; outline-offset: 2px; }
 
+/* Background music: off until the player presses play */
+.music {
+  position: absolute; right: 16px; bottom: 16px; z-index: 5; width: 40px; height: 40px; padding: 0;
+  display: grid; place-items: center; cursor: pointer; border: 0; border-radius: 50%;
+  color: #fff; background: rgba(1, 42, 62, .55);
+}
+.music:hover { background: rgba(1, 42, 62, .8); }
+.music:focus-visible { outline: 3px solid #f0f660; outline-offset: 2px; }
+.music svg { width: 20px; height: 20px; fill: currentColor; }
+.music .music-pause, .music[aria-pressed="true"] .music-play { display: none; }
+.music[aria-pressed="true"] .music-pause { display: block; }
+
 /* Card and buttons: cream face, thin black stroke, hard black shadow */
 .card, .button {
   position: relative; background: var(--cream); border: calc(1.72 * var(--u)) solid var(--ink);
