@@ -62,6 +62,20 @@ async function hasPermission(handle) {
   return await handle.requestPermission(options) === 'granted';
 }
 
+// Silent check, safe to poll: the remembered PSP's SAVEDATA if it's plugged in and
+// Chrome still grants access, else null. Never prompts.
+export async function checkPsp() {
+  if (!pspSupported) return null;
+  const remembered = await rememberedHandle;
+  if (!remembered) return null;
+  try {
+    if (await remembered.queryPermission({ mode: 'readwrite' }) !== 'granted') return null;
+    return await findSavedata(remembered);
+  } catch {
+    return null;
+  }
+}
+
 // Must run from a click: it may show the folder picker or a permission prompt.
 export async function connectPsp() {
   if (!pspSupported) throw new Error('Connecting a PSP needs Chrome or Edge on a computer.');

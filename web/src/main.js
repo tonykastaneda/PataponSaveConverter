@@ -26,7 +26,7 @@ import { writePsp, writeReplay } from './format.js';
 import { decryptPsp, encryptPsp } from './crypto.js';
 import { decryptReplay, encryptReplay } from './replayCrypto.js';
 import { detectPspInput, createBlankPspTemplate, createPspZip } from './archive.js';
-import { pspSupported, connectPsp, listSaves, freeSlotNumber, writeSave } from './pspDevice.js';
+import { pspSupported, checkPsp, connectPsp, listSaves, freeSlotNumber, writeSave } from './pspDevice.js';
 import { describeSfo, formatDate } from './sfo.js';
 
 const byId = (id) => document.getElementById(id);
@@ -95,8 +95,30 @@ function setBusy(busy) {
 }
 
 // ---------- Pieces ----------
-const pspHeader = () => el('div', 'header',
-  art(pspMini, 70.3, '', 'PSP'), art(iconCheck, 17.3, '', 'connected'), art(iconUsb, 23));
+// Spinner until a PSP is reachable, then the green check (toggled by setConnected).
+function pspStatus() {
+  const node = el('span', 'psp-status', el('span', 'spinner'), art(iconCheck, 17.3, 'check'));
+  node.setAttribute('role', 'img');
+  node.setAttribute('aria-label', state.savedata ? 'PSP connected' : 'No PSP connected');
+  return node;
+}
+const pspPair = (...before) => el('span', 'psp-pair', ...before, art(pspMini, 70.3, '', 'PSP'),
+  pspStatus(), art(iconUsb, 23));
+const pspHeader = () => el('div', 'header', pspPair());
+
+function setConnected(savedata) {
+  state.savedata = savedata;
+  document.documentElement.classList.toggle('psp-on', Boolean(savedata));
+  document.querySelectorAll('.psp-status').forEach((node) => {
+    node.setAttribute('aria-label', savedata ? 'PSP connected' : 'No PSP connected');
+  });
+}
+// Notice the PSP being plugged in or out once Chrome has kept access to it.
+async function pollPsp() {
+  if (document.hidden || state.busy) return;
+  const savedata = await checkPsp();
+  if (Boolean(savedata) !== Boolean(state.savedata)) setConnected(savedata);
+}
 
 function banner(save) {
   const node = el('div', 'banner');
@@ -128,7 +150,7 @@ function renderHome() {
   });
   card.replaceChildren(drop);
   const browse = button('Browse saves on a connected PSP', browsePsp,
-    art(textBrowseSaves, 217.9), art(pspMini, 70.3), art(iconUsb, 23));
+    art(textBrowseSaves, 217.9), pspPair());
   actions.replaceChildren(browse);
 }
 
@@ -176,7 +198,7 @@ function renderConfirm() {
   const [fromLogo, fromWidth] = LOGO[source.game][source.kind];
   const [toLogo, toWidth] = LOGO[source.game][other(source.kind)];
   card.replaceChildren(
-    state.savedata ? pspHeader() : el('div', 'header'),
+    pspSupported ? pspHeader() : el('div', 'header'),
     el('div', 'list static', saveRow(source, true)),
     el('div', 'summary',
       art(fromLogo, fromWidth, '', `${GAME_NAME[source.game]} ${platformName(source.kind)}`),
@@ -190,7 +212,7 @@ function renderConfirm() {
       button('Convert and download the PSP save', downloadPspZip,
         el('span', 'pair', art(textConvert, 146.8), art(iconDownload, 35.3))),
       button('Convert and write to the connected PSP', writeToPsp,
-        el('span', 'pair', art(pspMini, 70.3), art(iconUsb, 23))));
+        pspPair()));
   }
 }
 
@@ -258,7 +280,7 @@ async function browsePsp() {
   }
   setBusy(true);
   try {
-    state.savedata = await connectPsp();
+    setConnected(await connectPsp());
     setStatus('Reading saves…');
     state.saves = await listSaves(state.savedata);
     state.selected = 0;
@@ -326,7 +348,7 @@ const downloadPspZip = () => run(async () => {
 const writeToPsp = () => run(async () => {
   if (!pspSupported) throw new Error('Writing to a PSP needs Chrome or Edge on a computer. Use Convert to download instead.');
   if (!state.savedata) {
-    state.savedata = await connectPsp();
+    setConnected(await connectPsp());
     render();
     setBusy(true);
   }
@@ -369,6 +391,11 @@ window.addEventListener('drop', (event) => {
   card.classList.remove('dragging');
   openFile(event.dataTransfer?.files?.[0]);
 });
+
+if (!pspSupported) document.documentElement.classList.add('no-psp');
+pollPsp();
+setInterval(pollPsp, 2000);
+document.addEventListener('visibilitychange', pollPsp);
 
 history.replaceState({ screen: 'home' }, '');
 render();
