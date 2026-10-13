@@ -34,10 +34,12 @@ button { font: inherit; color: inherit; }
 
 /* Base Patapon logo: white with a black outline (zero-blur shadows on every side) */
 .brand {
-  --o: max(1.5px, calc(3 * var(--u)));
+  --o: max(3px, calc(6 * var(--u)));
+  --d: calc(var(--o) * .7071);
   width: calc(260 * var(--u)); margin-bottom: 14px; user-select: none; pointer-events: none;
   filter: drop-shadow(var(--o) 0 0 var(--ink)) drop-shadow(calc(-1 * var(--o)) 0 0 var(--ink))
-    drop-shadow(0 var(--o) 0 var(--ink)) drop-shadow(0 calc(-1 * var(--o)) 0 var(--ink));
+    drop-shadow(0 var(--o) 0 var(--ink)) drop-shadow(0 calc(-1 * var(--o)) 0 var(--ink))
+    drop-shadow(var(--d) var(--d) 0 var(--ink)) drop-shadow(calc(-1 * var(--d)) calc(-1 * var(--d)) 0 var(--ink));
 }
 
 /* Copyable Replay save folder, pasted into File Explorer's address bar; collapsed by default */
