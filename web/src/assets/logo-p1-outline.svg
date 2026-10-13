@@ -9,6 +9,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 2.8px;
+        paint-order: stroke fill;
       }
     </style>
   </defs>
