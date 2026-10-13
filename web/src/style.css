@@ -29,8 +29,28 @@ button { font: inherit; color: inherit; }
 }
 .ui {
   position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center;
-  padding: clamp(20px, 15svh, 265px) 16px 0;
+  padding: clamp(12px, calc(15svh - 106px), 160px) 16px 0;
 }
+
+/* Copyable Replay save folder, pasted into File Explorer's address bar */
+.save-path {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; width: calc(549.5 * var(--u));
+  margin-bottom: 18px; padding: 8px 8px 8px 14px; background: var(--cream);
+  border: calc(1.72 * var(--u)) solid var(--ink); border-radius: calc(8.7 * var(--u));
+  box-shadow: calc(4 * var(--u)) calc(4 * var(--u)) 0 var(--ink);
+}
+.save-path[hidden] { display: none; }
+.save-path-label { flex: 1; font-size: 12px; }
+.save-path-text {
+  order: 1; flex-basis: 100%; overflow-wrap: anywhere; line-height: 1.4;
+  font: 12px/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; user-select: all;
+}
+.save-path-copy {
+  flex: none; padding: 5px 12px; border: 1.5px solid var(--ink); border-radius: 6px;
+  background: var(--green); font-size: 12px; cursor: pointer;
+}
+.save-path-copy:hover { background: #8ae62a; }
+.save-path-copy:focus-visible { outline: 3px solid #f0f660; outline-offset: 2px; }
 
 /* Card and buttons: cream face, thin black stroke, hard black shadow */
 .card, .button {

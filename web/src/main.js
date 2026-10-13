@@ -34,6 +34,8 @@ const card = byId('card');
 const actions = byId('actions');
 const status = byId('status');
 const input = byId('file-input');
+const savePath = byId('save-path');
+const copyPath = byId('save-path-copy');
 
 const PREFIX = { p1: 'UCUS98711', p2: 'UCUS98732' };
 const GAME_NAME = { p1: 'Patapon', p2: 'Patapon 2' };
@@ -196,6 +198,7 @@ function render() {
   if (state.screen === 'list' && !state.savedata) state.screen = 'home';
   if (state.screen === 'confirm' && !state.source) state.screen = 'home';
   ({ home: renderHome, list: renderList, confirm: renderConfirm })[state.screen]();
+  savePath.hidden = state.screen !== 'home';
   setBusy(state.busy);
 }
 function go(screen) {
@@ -333,6 +336,20 @@ const writeToPsp = () => run(async () => {
   const psp = await buildPsp(state.source, number);
   await writeSave(state.savedata, psp.slot, { 'SECURE.BIN': psp.secure, 'PARAM.SFO': psp.sfo, 'ICON0.PNG': psp.icon });
   setStatus(`Saved to the PSP as ${psp.slot}.`);
+});
+
+// ---------- Copyable save folder ----------
+copyPath.addEventListener('click', async () => {
+  const text = byId('save-path-text').textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    copyPath.textContent = 'Copied!';
+  } catch {
+    // Clipboard blocked: select the text so Ctrl+C still works.
+    getSelection().selectAllChildren(byId('save-path-text'));
+    copyPath.textContent = 'Press Ctrl+C';
+  }
+  setTimeout(() => { copyPath.textContent = 'Copy'; }, 1600);
 });
 
 // ---------- Upload and drag-and-drop ----------
