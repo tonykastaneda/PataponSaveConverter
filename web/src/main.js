@@ -10,6 +10,7 @@ import iconCheck from './assets/icon-check.svg';
 import iconDownload from './assets/icon-download.svg';
 import iconUpload from './assets/icon-upload.svg';
 import iconUsb from './assets/icon-usb.svg';
+import japanStudio from './assets/japan-studio.svg';
 import logoP1 from './assets/logo-p1.svg';
 import logoP1Outline from './assets/logo-p1-outline.svg';
 import logoP1Replay from './assets/logo-p1-replay.svg';
@@ -20,6 +21,7 @@ import musicLoop from './assets/musicloop.mp3';
 import psLogo from './assets/ps-logo.svg';
 import pspLogo from './assets/psp-logo.svg';
 import pspMini from './assets/psp-mini.svg';
+import pyramid from './assets/pyramid.svg';
 import textConnect from './assets/text-connect.svg';
 import textConvert from './assets/text-convert.svg';
 import textSelect from './assets/text-select.svg';
@@ -57,7 +59,7 @@ const state = { screen: 'home', savedata: null, saves: [], selected: 0, source: 
 // CSS can't reach, so pick the still copy up front.
 const sceneUrl = matchMedia('(prefers-reduced-motion: reduce)').matches ? sceneStill : sceneAnimated;
 for (const [id, src] of [['scene', sceneUrl], ['brand', logoP1Outline], ['esrb', esrb], ['psp-logo', pspLogo],
-  ['ps-logo', psLogo], ['bandai', bandai]]) byId(id).src = src;
+  ['ps-logo', psLogo], ['bandai', bandai], ['japan-studio', japanStudio], ['pyramid', pyramid]]) byId(id).src = src;
 // Warm the cache so later screens don't pop their art in.
 for (const src of [arrowBig, arrowSmall, bannerP2Bg, iconCheck, iconDownload, logoP1, logoP1Replay,
   logoP1White, logoP2, logoP2Replay, textConvert, textSelect]) new Image().src = src;
